@@ -174,7 +174,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private static BluetoothGattCharacteristic target_chara = null;
     private Handler mhandler = new Handler();
 
-    private void connectBle(BluetoothDevice bluetoothDevice) {
+    public void connectBle(BluetoothDevice bluetoothDevice) {
         //从意图获取显示的蓝牙信息
         mDeviceName = bluetoothDevice.getName();
         mDeviceAddress = bluetoothDevice.getAddress();

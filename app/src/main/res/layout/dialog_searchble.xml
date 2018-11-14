@@ -9,7 +9,7 @@
         android:id="@+id/scanstable"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:text="寻找设备中" />
+        android:text="点击按钮开始查找" />
 
     <ListView
         android:id="@+id/searchble"
@@ -23,5 +23,5 @@
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:layout_alignParentBottom="true"
-        android:text="停止扫描" />
+        android:text="开始查找" />
 </RelativeLayout>
