@@ -8,21 +8,22 @@
     <TextView
         android:id="@+id/scanstable"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="50dp"
         android:layout_centerHorizontal="true"
+        android:gravity="center"
         android:text="点击按钮开始查找" />
 
     <ListView
         android:id="@+id/searchble"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp" />
+        android:layout_marginBottom="50dp"
+        android:layout_marginTop="50dp" />
 
     <Button
         android:id="@+id/scan"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="开始查找" />
