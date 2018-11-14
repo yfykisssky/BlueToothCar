@@ -24,6 +24,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import car.bluetooth.com.bluetoothcar.xxxcar.fragment.ShakeFragment;
 import car.bluetooth.com.bluetoothcar.xxxcar.service.BluetoothLeService;
 import car.bluetooth.com.bluetoothcar.xxxcar.util.DataOrderCenter;
 import car.bluetooth.com.bluetoothcar.xxxcar.util.OrderCode;
+import car.bluetooth.com.bluetoothcar.xxxcar.view.ProgressHelper;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
 
@@ -48,6 +50,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private Button scanBnt;
     private FragmentManager fm;
     private Fragment currentFragment;
+    private SearchBleDialog searchBleDialog;
 
     private List<Fragment> fragments = new ArrayList<>();
 
@@ -58,6 +61,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private final int ORDER_TIME = 60;
 
     public DataOrderCenter dataOrderCenter = new DataOrderCenter();
+
+    private ProgressHelper progressHelper;
+
+    private TextView connectStateTex;
 
     public void setGetBlueToothData(GetBlueToothData getBlueToothData) {
         this.getBlueToothData = getBlueToothData;
@@ -118,6 +125,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         navView.setCheckedItem(R.id.nav_control);
         scanBnt = findViewById(R.id.scan);
         scanBnt.setOnClickListener(this);
+        progressHelper = new ProgressHelper();
+        connectStateTex = findViewById(R.id.connctState);
     }
 
     private void switchFragment(Fragment fragment) {
@@ -154,7 +163,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 }
                 break;
             case R.id.scan:
-                SearchBleDialog searchBleDialog = new SearchBleDialog(this);
+                searchBleDialog = new SearchBleDialog(this);
                 searchBleDialog.show();
                 break;
         }
@@ -169,12 +178,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private String mRssi;
     //蓝牙service,负责后台的蓝牙服务
     private static BluetoothLeService mBluetoothLeService;
-    private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
+    //private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     //蓝牙特征值
     private static BluetoothGattCharacteristic target_chara = null;
-    private Handler mhandler = new Handler();
+    // private Handler mhandler = new Handler();
 
     public void connectBle(BluetoothDevice bluetoothDevice) {
+
+        progressHelper.showProgressDialog(this, "连接设备中");
         //从意图获取显示的蓝牙信息
         mDeviceName = bluetoothDevice.getName();
         mDeviceAddress = bluetoothDevice.getAddress();
@@ -236,19 +247,26 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
                 @Override
                 public void connectSuccess() {
+                    isSendRun = true;
+                    connectStateTex.setText("连接成功");
                     startSendData();
+                    progressHelper.dismissProgressDialog();
                 }
 
                 @Override
                 public void connectFailed() {
+                    progressHelper.dismissProgressDialog();
+                    connectStateTex.setText("未连接");
                     isSendRun = false;
+                    Toast.makeText(MainActivity.this, "连接错误,请重试", Toast.LENGTH_LONG).show();
+                    searchBleDialog.show();
                 }
 
                 @Override
                 public void gattServicesDiscover() {
-                    //获取设备的所有蓝牙服务
+                  /*  //获取设备的所有蓝牙服务
                     displayGattServices(mBluetoothLeService
-                            .getSupportedGattServices());
+                            .getSupportedGattServices());*/
                 }
 
                 @Override
@@ -265,7 +283,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
 
     };
-
+/*
     private void displayGattServices(List<BluetoothGattService> gattServices) {
 
         if (gattServices == null)
@@ -352,7 +370,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         }
 
-    }
+    }*/
 
     public void startSendData() {
 

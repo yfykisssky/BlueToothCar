@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import car.bluetooth.com.bluetoothcar.xxxcar.R;
 import car.bluetooth.com.bluetoothcar.xxxcar.activity.MainActivity;
+import car.bluetooth.com.bluetoothcar.xxxcar.view.ProgressHelper;
 
 public class SearchBleDialog extends BaseDialog implements View.OnClickListener {
 
@@ -41,6 +42,7 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
     // 蓝牙适配器
     BluetoothAdapter mBluetoothAdapter;
     LeDeviceListAdapter listAdapter;
+    ProgressHelper progressHelper;
     /*  *//*  // 蓝牙信号强度
       private ArrayList<Integer> rssis;*//*
     // 描述扫描蓝牙的状态
@@ -87,6 +89,7 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 activity.connectBle(mLeDevices.get(i));
+                dismiss();
             }
         });
 
