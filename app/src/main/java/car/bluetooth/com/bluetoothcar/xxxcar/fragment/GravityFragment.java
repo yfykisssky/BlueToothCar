@@ -35,7 +35,7 @@ public class GravityFragment extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_control, null);
+        View view = inflater.inflate(R.layout.fragment_gravity, null);
 
         context = this.getActivity();
         sensorManager = (SensorManager) this.getActivity().getSystemService(Context.SENSOR_SERVICE);
