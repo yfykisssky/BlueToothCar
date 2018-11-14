@@ -9,13 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import car.bluetooth.com.bluetoothcar.xxxcar.R;
+import car.bluetooth.com.bluetoothcar.xxxcar.activity.MainActivity;
+import car.bluetooth.com.bluetoothcar.xxxcar.util.OrderCode;
 import car.bluetooth.com.bluetoothcar.xxxcar.view.RockerView;
 
 public class AvoidFragment extends BaseFragment implements View.OnClickListener {
 
     private Button avoidBnt;
+
+    private TextView lengthTex;
 
     private boolean isFind = false;
 
@@ -27,6 +32,16 @@ public class AvoidFragment extends BaseFragment implements View.OnClickListener 
 
         initView(view);
 
+        getBlueToothData(new MainActivity.GetBlueToothData() {
+            @Override
+            public void onData(String data) {
+                if (data.contains(OrderCode.TOGET_LENGTH)) {
+                    //String length=data.substring(,OrderCode.TOGET_LENGTH.length());
+                    lengthTex.setText("");
+                }
+            }
+        });
+
         return view;
     }
 
@@ -36,6 +51,8 @@ public class AvoidFragment extends BaseFragment implements View.OnClickListener 
 
         avoidBnt.setOnClickListener(this);
 
+        lengthTex = view.findViewById(R.id.length);
+
     }
 
     @Override
@@ -44,9 +61,11 @@ public class AvoidFragment extends BaseFragment implements View.OnClickListener 
             case R.id.find:
                 if (isFind) {
                     avoidBnt.setText("暂停");
+                    getDataCenter().setAvoid(OrderCode.AVOID_START);
                     isFind = false;
                 } else {
                     avoidBnt.setText("开始");
+                    getDataCenter().setAvoid(OrderCode.AVOID_STOP);
                     isFind = true;
                 }
                 break;

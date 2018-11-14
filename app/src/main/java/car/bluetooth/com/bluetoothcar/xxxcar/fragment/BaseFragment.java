@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import car.bluetooth.com.bluetoothcar.xxxcar.activity.MainActivity;
+import car.bluetooth.com.bluetoothcar.xxxcar.util.DataOrderCenter;
 
 public class BaseFragment extends Fragment {
 
@@ -22,8 +23,8 @@ public class BaseFragment extends Fragment {
         mainActivity.setGetBlueToothData(getBlueToothData);
     }
 
-    public void sendData(String data) {
-        mainActivity.sendData(data);
+    public DataOrderCenter getDataCenter() {
+        return mainActivity.dataOrderCenter;
     }
 
 }

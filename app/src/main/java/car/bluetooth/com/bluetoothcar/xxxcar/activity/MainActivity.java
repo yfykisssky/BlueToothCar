@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -36,6 +37,8 @@ import car.bluetooth.com.bluetoothcar.xxxcar.fragment.FindFragment;
 import car.bluetooth.com.bluetoothcar.xxxcar.fragment.GravityFragment;
 import car.bluetooth.com.bluetoothcar.xxxcar.fragment.ShakeFragment;
 import car.bluetooth.com.bluetoothcar.xxxcar.service.BluetoothLeService;
+import car.bluetooth.com.bluetoothcar.xxxcar.util.DataOrderCenter;
+import car.bluetooth.com.bluetoothcar.xxxcar.util.OrderCode;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
 
@@ -50,12 +53,18 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private GetBlueToothData getBlueToothData;
 
+    private boolean isSendRun = false;
+
+    private final int ORDER_TIME = 60;
+
+    public DataOrderCenter dataOrderCenter = new DataOrderCenter();
+
     public void setGetBlueToothData(GetBlueToothData getBlueToothData) {
         this.getBlueToothData = getBlueToothData;
     }
 
     public interface GetBlueToothData {
-        void onData();
+        void onData(String data);
     }
 
     @Override
@@ -65,6 +74,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+
 
         initView();
 
@@ -173,7 +183,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
     }
 
-    public void sendData(String data) {
+    public void sendDataNow(String data) {
         byte[] buff = data.getBytes();
         int len = buff.length;
         int[] lens = dataSeparate(len);
@@ -219,17 +229,19 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
                 @Override
                 public void onData(String data) {
-
+                    if (getBlueToothData != null) {
+                        getBlueToothData.onData(data);
+                    }
                 }
 
                 @Override
                 public void connectSuccess() {
-
+                    startSendData();
                 }
 
                 @Override
                 public void connectFailed() {
-
+                    isSendRun = false;
                 }
 
                 @Override
@@ -339,6 +351,39 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             gattCharacteristicData.add(gattCharacteristicGroupData);
 
         }
+
+    }
+
+    public void startSendData() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                while (isSendRun) {
+                    try {
+
+                        if (!TextUtils.isEmpty(dataOrderCenter.getAvoid())) {
+                            sendDataNow(dataOrderCenter.getAvoid());
+                            dataOrderCenter.setAvoid("");
+                            Thread.sleep(ORDER_TIME);
+                            sendDataNow(OrderCode.GET_LENGTH);
+                            Thread.sleep(ORDER_TIME);
+                        }
+
+                        if (!TextUtils.isEmpty(dataOrderCenter.getFind())) {
+                            sendDataNow(dataOrderCenter.getFind());
+                            dataOrderCenter.setFind("");
+                            Thread.sleep(ORDER_TIME);
+                        }
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }).start();
 
     }
 
