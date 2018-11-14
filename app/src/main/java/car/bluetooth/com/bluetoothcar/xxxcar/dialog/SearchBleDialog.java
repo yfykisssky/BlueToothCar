@@ -100,6 +100,7 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
                     scanLeDevice(true);
                     scanBtn.setText("开始查找");
                     scanTex.setText("点击按钮开始查找");
+                    scanState = false;
                 } else {
                     scanLeDevice(false);
                     scanBtn.setText("停止查找");
