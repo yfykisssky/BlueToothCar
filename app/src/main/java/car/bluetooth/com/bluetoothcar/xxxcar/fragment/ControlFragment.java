@@ -3,6 +3,7 @@ package car.bluetooth.com.bluetoothcar.xxxcar.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,7 @@ public class ControlFragment extends BaseFragment {
         RockerView rockerView = view.findViewById(R.id.rockerview);
         if (rockerView != null) {
             rockerView.setCallBackMode(RockerView.CallBackMode.CALL_BACK_MODE_STATE_CHANGE);
-            rockerView.setOnShakeListener(RockerView.DirectionMode.DIRECTION_8, new RockerView.OnShakeListener() {
+       /*     rockerView.setOnShakeListener(RockerView.DirectionMode.DIRECTION_8, new RockerView.OnShakeListener() {
                 @Override
                 public void onStart() {
 
@@ -68,7 +69,7 @@ public class ControlFragment extends BaseFragment {
                 public void onFinish() {
                     //directionState = null;
                 }
-            });
+            });*/
             rockerView.setOnAngleChangeListener(new RockerView.OnAngleChangeListener() {
                 @Override
                 public void onStart() {
@@ -77,6 +78,8 @@ public class ControlFragment extends BaseFragment {
 
                 @Override
                 public void angle(double angle) {
+
+                    Log.e("angle", String.valueOf(angle));
 
                 }
 

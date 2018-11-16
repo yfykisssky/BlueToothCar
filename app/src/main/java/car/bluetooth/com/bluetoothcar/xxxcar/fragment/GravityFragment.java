@@ -52,7 +52,7 @@ public class GravityFragment extends BaseFragment {
         speedProgress = view.findViewById(R.id.speed_progress);
 
         rockerView = view.findViewById(R.id.rockerview);
-        rockerView.setEnabled(false);
+        rockerView.setCanTouch(false);
 
     }
 

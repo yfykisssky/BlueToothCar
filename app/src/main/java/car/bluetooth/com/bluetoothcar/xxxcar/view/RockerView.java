@@ -89,6 +89,15 @@ public class RockerView extends View {
     private Bitmap mRockerBitmap;
     private int mRockerColor;
 
+    private boolean canTouch = true;
+
+    public boolean isCanTouch() {
+        return canTouch;
+    }
+
+    public void setCanTouch(boolean canTouch) {
+        this.canTouch = canTouch;
+    }
 
     public RockerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -256,6 +265,9 @@ public class RockerView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!canTouch) {
+            return true;
+        }
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:// 按下
                 // 回调 开始
@@ -328,6 +340,12 @@ public class RockerView extends View {
         mRockerPosition.set((int) x, (int) y);
         invalidate();
     }
+
+  /*  public void moveScaleRocker(float x, float y, float radus) {
+        float moveX = x / radus;
+        mRockerPosition = getRockerPositionPoint(mCenterPoint, new Point((int) moveX, (int) moveY), mAreaRadius, mRockerRadius);
+    }
+*/
 
     /**
      * 弧度转角度

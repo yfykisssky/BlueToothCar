@@ -65,11 +65,7 @@ public class ShakeFragment extends BaseFragment {
         mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    //Todo
-                } else {
-                    //Todo
-                }
+                toOrBack = isChecked;
             }
         });
     }
@@ -94,6 +90,11 @@ public class ShakeFragment extends BaseFragment {
             if (x >= ACCELERATE_VALUE || y >= ACCELERATE_VALUE
                     || z >= ACCELERATE_VALUE) {
                 Vibrate(context, 300);
+                if (toOrBack) {
+
+                } else {
+
+                }
             }
 
         }
