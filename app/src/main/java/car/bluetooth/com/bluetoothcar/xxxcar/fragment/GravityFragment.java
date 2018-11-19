@@ -6,9 +6,11 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,18 +81,16 @@ public class GravityFragment extends BaseFragment {
         @Override
         public void onSensorChanged(SensorEvent event) {
 
-            float[] values = event.values;
+            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {//如果是加速度传感器
+                float[] values = event.values;
 
-            /**
-             * 一般在这三个方向的重力加速度达到20就达到了摇晃手机的状态 x : x轴方向的重力加速度，向右为正 y :
-             * y轴方向的重力加速度，向前为正 z : z轴方向的重力加速度，向上为正
-             */
-            float x = Math.abs(values[0]);
-            float y = Math.abs(values[1]);
-            float z = Math.abs(values[2]);
+                float x = values[0];
+                float y = values[1];
+                float z = values[2];
+                Log.e("out", "x" + x + "y" + y);
 
-            //rockerView
-
+                rockerView.moveScaleRocker((float) (x + MAX_VALUE), (float) (y + MAX_VALUE), (float) MAX_VALUE);
+            }
 
         }
 
@@ -98,6 +98,10 @@ public class GravityFragment extends BaseFragment {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
         }
+
+    }
+
+    private void toSpeedScale(float scale) {
 
     }
 

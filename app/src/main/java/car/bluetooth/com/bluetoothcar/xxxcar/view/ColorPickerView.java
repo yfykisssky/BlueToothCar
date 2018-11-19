@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -38,7 +37,6 @@ public class ColorPickerView extends android.support.v7.widget.AppCompatImageVie
     private Bitmap imageBitmap;
     private float viewRadius;// 整个view半径
     private float realViewRadius;
-    //private float radius;// 图片半径
 
     /**
      * 初始化画笔
@@ -54,7 +52,7 @@ public class ColorPickerView extends android.support.v7.widget.AppCompatImageVie
         mBitmapPaint = new Paint();
         iconPoint = new PointF();
         imageBitmap = BitmapFactory.decodeResource(context.getResources(),
-                R.drawable.pick);
+                R.drawable.color);
         imageBitmap = ViewTool.scaleBitmap(imageBitmap, (int) (widthAll - iconRadius * 2), (int) (widthAll - iconRadius * 2));
         this.setScaleType(ScaleType.CENTER);
         this.setImageBitmap(imageBitmap);
@@ -157,8 +155,8 @@ public class ColorPickerView extends android.support.v7.widget.AppCompatImageVie
         if (distance > (viewRadius - iconRadius)) { // 如果斜边距离大于半径，则取点和圆最近的一个点为x,y
             float maxX = x - viewRadius;
             float maxY = y - viewRadius;
-            x = ((viewRadius * maxX) / distance) + viewRadius+iconRadius; // 通过三角形一边平行原理求出x,y
-            y = ((viewRadius * maxY) / distance) + viewRadius+iconRadius;
+            x = ((viewRadius * maxX) / distance) + viewRadius + iconRadius; // 通过三角形一边平行原理求出x,y
+            y = ((viewRadius * maxY) / distance) + viewRadius + iconRadius;
         }
         iconPoint.x = x;
         iconPoint.y = y;

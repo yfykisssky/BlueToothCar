@@ -1,5 +1,6 @@
 package car.bluetooth.com.bluetoothcar.xxxcar.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.larswerkman.holocolorpicker.ColorPicker;
@@ -17,11 +19,19 @@ import car.bluetooth.com.bluetoothcar.xxxcar.R;
 import car.bluetooth.com.bluetoothcar.xxxcar.view.ColorPickerView;
 import car.bluetooth.com.bluetoothcar.xxxcar.view.RockerView;
 
-public class ControlFragment extends BaseFragment {
+public class ControlFragment extends BaseFragment implements View.OnClickListener {
 
     private int speedScale;
 
     private ProgressBar speedProgress;
+
+    private TextView colorTex;
+
+    private LinearLayout colorLay;
+
+    private LinearLayout soundLay;
+
+    private LinearLayout faceLay;
 
     @Nullable
     @Override
@@ -38,7 +48,17 @@ public class ControlFragment extends BaseFragment {
 
         speedProgress = view.findViewById(R.id.speed_progress);
 
-        LinearLayout colorLayout = view.findViewById(R.id.layout_color);
+        colorLay = view.findViewById(R.id.layout_color);
+        soundLay = view.findViewById(R.id.layout_sound);
+        faceLay = view.findViewById(R.id.layout_face);
+
+        view.findViewById(R.id.color).setOnClickListener(this);
+        view.findViewById(R.id.sound).setOnClickListener(this);
+        view.findViewById(R.id.face).setOnClickListener(this);
+
+        colorTex = view.findViewById(R.id.color_show);
+
+        colorTex.setBackgroundColor(Color.WHITE);
 
         ColorPickerView cpv = view.findViewById(R.id.picker);
         cpv.setOnColorChangedListenner(new ColorPickerView.OnColorChangedListener() {
@@ -47,7 +67,6 @@ public class ControlFragment extends BaseFragment {
                 if (r == 0 && g == 0 && b == 0) {
                     return;
                 }
-                //Toast.makeText(MyViewActivity.this, "选取 RGB:"+r+","+g+","+b, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -55,7 +74,7 @@ public class ControlFragment extends BaseFragment {
                 if (r == 0 && g == 0 && b == 0) {
                     return;
                 }
-                // tv_rgb.setText("RGB:" + r + "," + g + "," + b);
+                colorTex.setBackgroundColor(Color.rgb(r, g, b));
             }
         });
 
@@ -106,5 +125,39 @@ public class ControlFragment extends BaseFragment {
             }
         });
 
+    }
+
+    private void toSpeed(double angle) {
+      /*  double leftWheelSpeed = 0;
+        double leftRightSpeed = 0;
+        if (angle >= 0 || angle <= 90) {
+            leftWheelSpeed = angle / 90 * speedScale * 255;
+            leftRightSpeed = (90 - angle) / 90 * speedScale * 255;
+        } else if (angle <= 180 || angle > 90) {
+            leftWheelSpeed = (180 - angle) / 180 * speedScale * 255;
+            leftRightSpeed = angle / 180 * speedScale * 255;
+        }*/
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.color:
+                colorLay.setVisibility(View.VISIBLE);
+                soundLay.setVisibility(View.GONE);
+                faceLay.setVisibility(View.GONE);
+                break;
+            case R.id.sound:
+                colorLay.setVisibility(View.GONE);
+                soundLay.setVisibility(View.VISIBLE);
+                faceLay.setVisibility(View.GONE);
+                break;
+            case R.id.face:
+                colorLay.setVisibility(View.GONE);
+                soundLay.setVisibility(View.GONE);
+                faceLay.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 }

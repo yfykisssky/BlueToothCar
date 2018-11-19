@@ -20,7 +20,7 @@
             android:layout_marginTop="50dp"
             rocker:areaBackground="@drawable/default_area_bg"
             rocker:rockerBackground="@drawable/default_rocker_bg"
-            rocker:rockerRadius="15dp" />
+            rocker:rockerRadius="35dp" />
     </RelativeLayout>
 
     <LinearLayout

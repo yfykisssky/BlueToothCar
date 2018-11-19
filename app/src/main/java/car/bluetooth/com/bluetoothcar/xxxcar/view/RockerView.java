@@ -282,8 +282,6 @@ public class RockerView extends View {
             case MotionEvent.ACTION_CANCEL:// 移出区域
                 // 回调 结束
                 callBackFinish();
-                float upX = event.getX();
-                float upY = event.getY();
                 moveRocker(mCenterPoint.x, mCenterPoint.y);
                 if (onLenXYListener != null) {
                     onLenXYListener.lenXY(0, mAreaRadius);
@@ -341,11 +339,11 @@ public class RockerView extends View {
         invalidate();
     }
 
-  /*  public void moveScaleRocker(float x, float y, float radus) {
-        float moveX = x / radus;
-        mRockerPosition = getRockerPositionPoint(mCenterPoint, new Point((int) moveX, (int) moveY), mAreaRadius, mRockerRadius);
+    public void moveScaleRocker(float x, float y, float radus) {
+        float moveX = x * (mAreaRadius)/ radus;
+        float moveY = y * (mAreaRadius)/ radus;
+        moveRocker(moveX, moveY);
     }
-*/
 
     /**
      * 弧度转角度
