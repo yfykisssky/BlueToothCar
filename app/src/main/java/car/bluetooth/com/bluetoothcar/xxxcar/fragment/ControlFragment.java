@@ -9,10 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.larswerkman.holocolorpicker.ColorPicker;
 
 import car.bluetooth.com.bluetoothcar.xxxcar.R;
+import car.bluetooth.com.bluetoothcar.xxxcar.view.ColorPickerView;
 import car.bluetooth.com.bluetoothcar.xxxcar.view.RockerView;
 
 public class ControlFragment extends BaseFragment {
@@ -20,8 +22,6 @@ public class ControlFragment extends BaseFragment {
     private int speedScale;
 
     private ProgressBar speedProgress;
-
-    private ColorPicker picker;
 
     @Nullable
     @Override
@@ -40,14 +40,22 @@ public class ControlFragment extends BaseFragment {
 
         LinearLayout colorLayout = view.findViewById(R.id.layout_color);
 
-        picker = view.findViewById(R.id.picker);
-
-        picker.setShowOldCenterColor(false);
-
-        picker.setOnColorChangedListener(new ColorPicker.OnColorChangedListener() {
+        ColorPickerView cpv = view.findViewById(R.id.picker);
+        cpv.setOnColorChangedListenner(new ColorPickerView.OnColorChangedListener() {
             @Override
-            public void onColorChanged(int color) {
+            public void onColorChanged(int r, int g, int b) {
+                if (r == 0 && g == 0 && b == 0) {
+                    return;
+                }
+                //Toast.makeText(MyViewActivity.this, "选取 RGB:"+r+","+g+","+b, Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void onMoveColor(int r, int g, int b) {
+                if (r == 0 && g == 0 && b == 0) {
+                    return;
+                }
+                // tv_rgb.setText("RGB:" + r + "," + g + "," + b);
             }
         });
 
