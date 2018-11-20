@@ -1,6 +1,7 @@
 package car.bluetooth.com.bluetoothcar.xxxcar.activity;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import car.bluetooth.com.bluetoothcar.xxxcar.R;
 import car.bluetooth.com.bluetoothcar.xxxcar.dialog.SearchBleDialog;
@@ -82,7 +84,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-
         initView();
 
         //菜单的点击事件
@@ -113,6 +114,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         initFragment();
 
+        initBleService();
 
     }
 
@@ -181,7 +183,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     //private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     //蓝牙特征值
     private static BluetoothGattCharacteristic target_chara = null;
-    // private Handler mhandler = new Handler();
+
+    private void initBleService() {
+        /* 启动蓝牙service */
+        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+    }
 
     public void connectBle(BluetoothDevice bluetoothDevice) {
 
@@ -189,9 +196,56 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         //从意图获取显示的蓝牙信息
         mDeviceName = bluetoothDevice.getName();
         mDeviceAddress = bluetoothDevice.getAddress();
-        /* 启动蓝牙service */
-        Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
-        bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
+        // Automatically connects to the device upon successful start-up
+        // initialization.
+        // 根据蓝牙地址，连接设备
+        mBluetoothLeService.setGetBlueToothData(new BluetoothLeService.GetBlueToothData() {
+
+            @Override
+            public void onData(String data) {
+                if (getBlueToothData != null) {
+                    getBlueToothData.onData(data);
+                }
+            }
+
+            @Override
+            public void connectSuccess() {
+
+            }
+
+            @Override
+            public void connectFailed() {
+                connectError();
+            }
+
+            @Override
+            public void gattServicesDiscover(BluetoothGatt gatt) {
+                isSendRun = true;
+                connectStateTex.setText("连接成功");
+                startSendData();
+                //BluetoothGattService service = gatt.getService(UUID.fromString(HEART_RATE_MEASUREMENT));
+                BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID.fromString(HEART_RATE_MEASUREMENT));
+                mBluetoothLeService.setCharacteristicNotification(characteristic, true);
+                progressHelper.dismissProgressDialog();
+            }
+
+            @Override
+            public void onRssi(int rssi) {
+
+            }
+        });
+
+        mBluetoothLeService.connect(bluetoothDevice);
+
+    }
+
+    private void connectError() {
+        progressHelper.dismissProgressDialog();
+        connectStateTex.setText("未连接");
+        isSendRun = false;
+        Toast.makeText(MainActivity.this, "连接错误,请重试", Toast.LENGTH_LONG).show();
+        searchBleDialog.show();
     }
 
     public void sendDataNow(String data) {
@@ -228,58 +282,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                                        IBinder service) {
             mBluetoothLeService = ((BluetoothLeService.LocalBinder) service)
                     .getService();
-            if (!mBluetoothLeService.initialize()) {
-                finish();
-            }
-            // Automatically connects to the device upon successful start-up
-            // initialization.
-            // 根据蓝牙地址，连接设备
-            mBluetoothLeService.connect(mDeviceAddress);
-
-            mBluetoothLeService.setGetBlueToothData(new BluetoothLeService.GetBlueToothData() {
-
-                @Override
-                public void onData(String data) {
-                    if (getBlueToothData != null) {
-                        getBlueToothData.onData(data);
-                    }
-                }
-
-                @Override
-                public void connectSuccess() {
-                    isSendRun = true;
-                    connectStateTex.setText("连接成功");
-                    startSendData();
-                    progressHelper.dismissProgressDialog();
-                }
-
-                @Override
-                public void connectFailed() {
-                    progressHelper.dismissProgressDialog();
-                    connectStateTex.setText("未连接");
-                    isSendRun = false;
-                    Toast.makeText(MainActivity.this, "连接错误,请重试", Toast.LENGTH_LONG).show();
-                    searchBleDialog.show();
-                }
-
-                @Override
-                public void gattServicesDiscover() {
-                  /*  //获取设备的所有蓝牙服务
-                    displayGattServices(mBluetoothLeService
-                            .getSupportedGattServices());*/
-                }
-
-                @Override
-                public void onRssi(int rssi) {
-
-                }
-            });
 
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            mBluetoothLeService = null;
+            if (mBluetoothLeService != null) {
+                mBluetoothLeService.close();
+                mBluetoothLeService = null;
+            }
         }
 
     };
@@ -405,5 +416,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isSendRun = false;
+        unbindService(mServiceConnection);
+    }
 }
