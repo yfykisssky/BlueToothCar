@@ -40,8 +40,8 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
     private TextView scanTex;
     private boolean scanState = false;
     // 蓝牙适配器
-    BluetoothAdapter mBluetoothAdapter;
-    LeDeviceListAdapter listAdapter;
+    private BluetoothAdapter mBluetoothAdapter;
+    private LeDeviceListAdapter listAdapter;
 
     @SuppressLint("HandlerLeak")
     private Handler viewHandler = new Handler() {
@@ -91,12 +91,12 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
         switch (view.getId()) {
             case R.id.scan:
                 if (scanState) {
-                    scanLeDevice(true);
+                    mBluetoothAdapter.startLeScan(mLeScanCallback);
                     scanBtn.setText("开始查找");
                     scanTex.setText("点击按钮开始查找");
                     scanState = false;
                 } else {
-                    scanLeDevice(false);
+                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
                     scanBtn.setText("停止查找");
                     scanTex.setText("查找中……");
                     scanState = true;
@@ -168,16 +168,6 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
             Intent enableBtIntent = new Intent(
                     BluetoothAdapter.ACTION_REQUEST_ENABLE);
             activity.startActivity(enableBtIntent);
-        }
-
-    }
-
-    //扫描蓝牙设备
-    private void scanLeDevice(final boolean enable) {
-        if (enable) {
-            mBluetoothAdapter.startLeScan(mLeScanCallback);
-        } else {
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
         }
 
     }
