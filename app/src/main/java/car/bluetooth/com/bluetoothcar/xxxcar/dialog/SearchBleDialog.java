@@ -42,16 +42,7 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
     // 蓝牙适配器
     BluetoothAdapter mBluetoothAdapter;
     LeDeviceListAdapter listAdapter;
-    ProgressHelper progressHelper;
-    /*  *//*  // 蓝牙信号强度
-      private ArrayList<Integer> rssis;*//*
-    // 描述扫描蓝牙的状态
-    private boolean mScanning;
-    private boolean scan_flag;
-    private Handler mHandler = new Handler();
-    int REQUEST_ENABLE_BT = 1;
-    // 蓝牙扫描时间
-    private static final long SCAN_PERIOD = 10000;*/
+
     @SuppressLint("HandlerLeak")
     private Handler viewHandler = new Handler() {
         @Override
@@ -116,8 +107,6 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
 
     private class LeDeviceListAdapter extends BaseAdapter {
 
-        private LayoutInflater mInflator;
-
         @Override
         public int getCount() {
             return mLeDevices.size();
@@ -133,26 +122,41 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
             return i;
         }
 
-        @SuppressLint("ViewHolder")
         @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            view = mInflator.inflate(R.layout.listitem_bleitem, null);
-            TextView deviceAddress = view.findViewById(R.id.address);
-            TextView deviceName = view.findViewById(R.id.name);
+        public View getView(int i, View convertView, ViewGroup viewGroup) {
+
+            ViewHolder holder;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(context).inflate(R.layout.listitem_bleitem, null);
+                holder = new ViewHolder();
+
+                holder.deviceAddress = convertView.findViewById(R.id.address);
+                holder.deviceName = convertView.findViewById(R.id.name);
+
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
 
             BluetoothDevice device = mLeDevices.get(i);
-            deviceAddress.setText(device.getAddress());
-            deviceName.setText(device.getName());
+            holder.deviceAddress.setText(device.getAddress());
+            holder.deviceName.setText(device.getName());
 
-            return view;
+            return convertView;
         }
+
+        private class ViewHolder {
+            TextView deviceAddress;
+            TextView deviceName;
+        }
+
     }
 
     private void init_ble() {
         // 手机硬件支持蓝牙
         if (!context.getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(context, "不支持BLE", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "手机不支持BLE", Toast.LENGTH_SHORT).show();
             dismiss();
         }
         // Initializes Bluetooth adapter.
