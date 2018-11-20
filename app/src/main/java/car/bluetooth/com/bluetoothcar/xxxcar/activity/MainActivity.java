@@ -224,7 +224,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 isSendRun = true;
                 connectStateTex.setText("连接成功");
                 startSendData();
-                //BluetoothGattService service = gatt.getService(UUID.fromString(HEART_RATE_MEASUREMENT));
+                BluetoothGattService service = gatt.getService(UUID.fromString(HEART_RATE_MEASUREMENT));
                 BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID.fromString(HEART_RATE_MEASUREMENT));
                 mBluetoothLeService.setCharacteristicNotification(characteristic, true);
                 progressHelper.dismissProgressDialog();
