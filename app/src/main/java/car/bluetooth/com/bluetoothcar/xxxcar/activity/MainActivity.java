@@ -172,17 +172,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     //蓝牙4.0的UUID,其中0000ffe1-0000-1000-8000-00805f9b34fb是广州汇承信息科技有限公司08蓝牙模块的UUID
-    public static String HEART_RATE_MEASUREMENT = "0000ffe1-0000-1000-8000-00805f9b34fb";
-    //蓝牙地址
-    private String mDeviceAddress;
-    private String mDeviceName;
-    //蓝牙信号值
-    private String mRssi;
+    public static final String SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
+    public static final String CHARAC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb";
     //蓝牙service,负责后台的蓝牙服务
-    private static BluetoothLeService mBluetoothLeService;
-    //private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
-    //蓝牙特征值
-    private static BluetoothGattCharacteristic target_chara = null;
+    private BluetoothLeService mBluetoothLeService;
+    //蓝牙写入
+    private BluetoothGattCharacteristic targetDara = null;
 
     private void initBleService() {
         /* 启动蓝牙service */
@@ -193,12 +188,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void connectBle(BluetoothDevice bluetoothDevice) {
 
         progressHelper.showProgressDialog(this, "连接设备中");
-        //从意图获取显示的蓝牙信息
-        mDeviceName = bluetoothDevice.getName();
-        mDeviceAddress = bluetoothDevice.getAddress();
-
-        // Automatically connects to the device upon successful start-up
-        // initialization.
         // 根据蓝牙地址，连接设备
         mBluetoothLeService.setGetBlueToothData(new BluetoothLeService.GetBlueToothData() {
 
@@ -224,9 +213,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 isSendRun = true;
                 connectStateTex.setText("连接成功");
                 startSendData();
-                BluetoothGattService service = gatt.getService(UUID.fromString(HEART_RATE_MEASUREMENT));
-                BluetoothGattCharacteristic characteristic = service.getCharacteristic(UUID.fromString(HEART_RATE_MEASUREMENT));
-                mBluetoothLeService.setCharacteristicNotification(characteristic, true);
+                BluetoothGattService service = gatt.getService(UUID.fromString(SERVICE_UUID));
+                targetDara = service.getCharacteristic(UUID.fromString(CHARAC_UUID));
+                mBluetoothLeService.setCharacteristicNotification(targetDara, true);
                 progressHelper.dismissProgressDialog();
             }
 
@@ -254,15 +243,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         int[] lens = dataSeparate(len);
         for (int i = 0; i < lens[0]; i++) {
             String str = new String(buff, 20 * i, 20);
-            target_chara.setValue(str);//只能一次发送20字节，所以这里要分包发送
+            targetDara.setValue(str);//只能一次发送20字节，所以这里要分包发送
             //调用蓝牙服务的写特征值方法实现发送数据
-            mBluetoothLeService.writeCharacteristic(target_chara);
+            mBluetoothLeService.writeCharacteristic(targetDara);
         }
         if (lens[1] != 0) {
             String str = new String(buff, 20 * lens[0], lens[1]);
-            target_chara.setValue(str);
+            targetDara.setValue(str);
             //调用蓝牙服务的写特征值方法实现发送数据
-            mBluetoothLeService.writeCharacteristic(target_chara);
+            mBluetoothLeService.writeCharacteristic(targetDara);
 
         }
     }
@@ -294,94 +283,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
 
     };
-/*
-    private void displayGattServices(List<BluetoothGattService> gattServices) {
-
-        if (gattServices == null)
-            return;
-        String uuid = null;
-        String unknownServiceString = "unknown_service";
-        String unknownCharaString = "unknown_characteristic";
-
-        // 服务数据,可扩展下拉列表的第一级数据
-        ArrayList<HashMap<String, String>> gattServiceData = new ArrayList<HashMap<String, String>>();
-
-        // 特征数据（隶属于某一级服务下面的特征值集合）
-        ArrayList<ArrayList<HashMap<String, String>>> gattCharacteristicData = new ArrayList<ArrayList<HashMap<String, String>>>();
-
-        // 部分层次，所有特征值集合
-        mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
-
-        // Loops through available GATT Services.
-        for (BluetoothGattService gattService : gattServices) {
-
-            // 获取服务列表
-            HashMap<String, String> currentServiceData = new HashMap<String, String>();
-            uuid = gattService.getUuid().toString();
-
-            // 查表，根据该uuid获取对应的服务名称。SampleGattAttributes这个表需要自定义。
-
-            gattServiceData.add(currentServiceData);
-
-            System.out.println("Service uuid:" + uuid);
-
-            ArrayList<HashMap<String, String>> gattCharacteristicGroupData = new ArrayList<HashMap<String, String>>();
-
-            // 从当前循环所指向的服务中读取特征值列表
-            List<BluetoothGattCharacteristic> gattCharacteristics = gattService
-                    .getCharacteristics();
-
-            ArrayList<BluetoothGattCharacteristic> charas = new ArrayList<BluetoothGattCharacteristic>();
-
-            // Loops through available Characteristics.
-            // 对于当前循环所指向的服务中的每一个特征值
-            for (final BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
-                charas.add(gattCharacteristic);
-                HashMap<String, String> currentCharaData = new HashMap<String, String>();
-                uuid = gattCharacteristic.getUuid().toString();
-
-                if (gattCharacteristic.getUuid().toString()
-                        .equals(HEART_RATE_MEASUREMENT)) {
-                    // 测试读取当前Characteristic数据，会触发mOnDataAvailable.onCharacteristicRead()
-                    mhandler.postDelayed(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            // TODO Auto-generated method stub
-                            mBluetoothLeService
-                                    .readCharacteristic(gattCharacteristic);
-                        }
-                    }, 200);
-
-                    // 接受Characteristic被写的通知,收到蓝牙模块的数据后会触发mOnDataAvailable.onCharacteristicWrite()
-                    mBluetoothLeService.setCharacteristicNotification(
-                            gattCharacteristic, true);
-                    target_chara = gattCharacteristic;
-                    // 设置数据内容
-                    // 往蓝牙模块写入数据
-                    // mBluetoothLeService.writeCharacteristic(gattCharacteristic);
-                }
-                List<BluetoothGattDescriptor> descriptors = gattCharacteristic
-                        .getDescriptors();
-                for (BluetoothGattDescriptor descriptor : descriptors) {
-                    System.out.println("---descriptor UUID:"
-                            + descriptor.getUuid());
-                    // 获取特征值的描述
-                    mBluetoothLeService.getCharacteristicDescriptor(descriptor);
-                    // mBluetoothLeService.setCharacteristicNotification(gattCharacteristic,
-                    // true);
-                }
-
-                gattCharacteristicGroupData.add(currentCharaData);
-            }
-            // 按先后顺序，分层次放入特征值集合中，只有特征值
-            mGattCharacteristics.add(charas);
-            // 构件第二级扩展列表（服务下面的特征值）
-            gattCharacteristicData.add(gattCharacteristicGroupData);
-
-        }
-
-    }*/
 
     public void startSendData() {
 
