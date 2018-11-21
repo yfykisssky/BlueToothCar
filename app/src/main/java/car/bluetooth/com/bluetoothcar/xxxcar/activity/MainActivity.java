@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,7 +49,7 @@ import car.bluetooth.com.bluetoothcar.xxxcar.view.ProgressHelper;
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
 
     private NavigationView navView;
-    private TextView tvLeft;
+    private LinearLayout tvLeft;
     private DrawerLayout drawer;
     private FragmentManager fm;
     private Fragment currentFragment;
@@ -57,6 +58,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private List<Fragment> fragments = new ArrayList<>();
 
     private GetBlueToothData getBlueToothData;
+
+    private TextView menuChoiceTex;
 
     private boolean isSendRun = false;
 
@@ -91,6 +94,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 item.setChecked(true);
+                menuChoiceTex.setText(item.getTitle());
                 switch (item.getItemId()) {
                     case R.id.nav_control:
                         switchFragment(fragments.get(0));
@@ -121,6 +125,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private void initView() {
         navView = findViewById(R.id.nav_view);
         tvLeft = findViewById(R.id.menu_left);
+        menuChoiceTex = findViewById(R.id.menu_choice);
         tvLeft.setOnClickListener(this);
         drawer = findViewById(R.id.drawer);
         navView.setItemIconTintList(null);
