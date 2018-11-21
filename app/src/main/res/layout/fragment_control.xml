@@ -6,22 +6,17 @@
     android:background="#EDEDED"
     android:orientation="horizontal">
 
-    <RelativeLayout
+    <car.bluetooth.com.bluetoothcar.xxxcar.view.RockerView
+        android:id="@+id/rockerview"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
-
-        <car.bluetooth.com.bluetoothcar.xxxcar.view.RockerView
-            android:id="@+id/rockerview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="50dp"
-            android:layout_marginLeft="50dp"
-            android:layout_marginTop="50dp"
-            rocker:areaBackground="@drawable/default_area_bg"
-            rocker:rockerBackground="@drawable/default_rocker_bg"
-            rocker:rockerRadius="35dp" />
-    </RelativeLayout>
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="50dp"
+        rocker:areaBackground="@drawable/default_area_bg"
+        rocker:rockerBackground="@drawable/default_rocker_bg"
+        rocker:rockerRadius="35dp" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
