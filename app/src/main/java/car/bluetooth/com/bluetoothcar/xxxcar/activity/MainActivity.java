@@ -1,9 +1,9 @@
 package car.bluetooth.com.bluetoothcar.xxxcar.activity;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -24,11 +25,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,7 +50,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private NavigationView navView;
     private TextView tvLeft;
     private DrawerLayout drawer;
-    private Button scanBnt;
     private FragmentManager fm;
     private Fragment currentFragment;
     private SearchBleDialog searchBleDialog;
@@ -125,10 +125,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         drawer = findViewById(R.id.drawer);
         navView.setItemIconTintList(null);
         navView.setCheckedItem(R.id.nav_control);
-        scanBnt = findViewById(R.id.scan);
-        scanBnt.setOnClickListener(this);
+        findViewById(R.id.scan).setOnClickListener(this);
         progressHelper = new ProgressHelper();
         connectStateTex = findViewById(R.id.connctState);
+        findViewById(R.id.help).setOnClickListener(this);
+
     }
 
     private void switchFragment(Fragment fragment) {
@@ -168,6 +169,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 searchBleDialog = new SearchBleDialog(this);
                 searchBleDialog.show();
                 break;
+            case R.id.help:
+                startActivity(new Intent(this, HelpActivity.class));
+                break;
         }
     }
 
@@ -193,9 +197,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             @Override
             public void onData(String data) {
-                if (getBlueToothData != null) {
-                    getBlueToothData.onData(data);
-                }
+                Message msg = new Message();
+                msg.what = 2;
+                msg.obj = data;
+                viewHandler.sendMessage(msg);
             }
 
             @Override
@@ -205,18 +210,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             @Override
             public void connectFailed() {
-                connectError();
+                viewHandler.sendEmptyMessage(0);
             }
 
             @Override
             public void gattServicesDiscover(BluetoothGatt gatt) {
-                isSendRun = true;
-                connectStateTex.setText("连接成功");
-                startSendData();
-                BluetoothGattService service = gatt.getService(UUID.fromString(SERVICE_UUID));
-                targetDara = service.getCharacteristic(UUID.fromString(CHARAC_UUID));
-                mBluetoothLeService.setCharacteristicNotification(targetDara, true);
-                progressHelper.dismissProgressDialog();
+                Message msg = new Message();
+                msg.what = 1;
+                msg.obj = gatt;
+                viewHandler.sendMessage(msg);
             }
 
             @Override
@@ -228,6 +230,36 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         mBluetoothLeService.connect(bluetoothDevice);
 
     }
+
+
+    @SuppressLint("HandlerLeak")
+    private Handler viewHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0:
+                    connectError();
+                    break;
+                case 1:
+                    isSendRun = true;
+                    connectStateTex.setText("连接成功");
+                    BluetoothGatt gatt = (BluetoothGatt) msg.obj;
+                    BluetoothGattService service = gatt.getService(UUID.fromString(SERVICE_UUID));
+                    targetDara = service.getCharacteristic(UUID.fromString(CHARAC_UUID));
+                    mBluetoothLeService.setCharacteristicNotification(targetDara, true);
+                    startSendData();
+                    progressHelper.dismissProgressDialog();
+                    break;
+                case 2:
+                    String data = (String) msg.obj;
+                    if (getBlueToothData != null) {
+                        getBlueToothData.onData(data);
+                    }
+                    break;
+            }
+        }
+    };
 
     private void connectError() {
         progressHelper.dismissProgressDialog();

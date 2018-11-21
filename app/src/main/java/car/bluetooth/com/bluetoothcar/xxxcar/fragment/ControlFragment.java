@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,10 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
     private LinearLayout soundLay;
 
     private LinearLayout faceLay;
+
+    private RadioGroup faceRad;
+
+    private RadioGroup soundRad;
 
     @Nullable
     @Override
@@ -75,6 +80,42 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
                     return;
                 }
                 colorTex.setBackgroundColor(Color.rgb(r, g, b));
+            }
+        });
+
+        faceRad = view.findViewById(R.id.face_radio);
+
+        faceRad.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (radioGroup.getCheckedRadioButtonId()) {
+                    case R.id.face1:
+                        break;
+                    case R.id.face2:
+                        break;
+                    case R.id.face3:
+                        break;
+                    case R.id.face4:
+                        break;
+                }
+            }
+        });
+
+        soundRad = view.findViewById(R.id.sound_radio);
+
+        soundRad.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (radioGroup.getCheckedRadioButtonId()) {
+                    case R.id.sound1:
+                        break;
+                    case R.id.sound2:
+                        break;
+                    case R.id.sound3:
+                        break;
+                    case R.id.sound4:
+                        break;
+                }
             }
         });
 
@@ -159,5 +200,11 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
                 faceLay.setVisibility(View.VISIBLE);
                 break;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        faceRad.clearCheck();
     }
 }

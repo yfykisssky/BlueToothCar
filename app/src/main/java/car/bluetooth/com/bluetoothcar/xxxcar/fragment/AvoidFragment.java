@@ -22,7 +22,7 @@ public class AvoidFragment extends BaseFragment implements View.OnClickListener 
 
     private TextView lengthTex;
 
-    private boolean isFind = false;
+    private boolean isStart = false;
 
     @Nullable
     @Override
@@ -58,15 +58,15 @@ public class AvoidFragment extends BaseFragment implements View.OnClickListener 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.find:
-                if (isFind) {
+            case R.id.avoid:
+                if (isStart) {
                     avoidBnt.setText("暂停");
                     getDataCenter().setAvoid(OrderCode.AVOID_START);
-                    isFind = false;
+                    isStart = false;
                 } else {
                     avoidBnt.setText("开始");
                     getDataCenter().setAvoid(OrderCode.AVOID_STOP);
-                    isFind = true;
+                    isStart = true;
                 }
                 break;
         }

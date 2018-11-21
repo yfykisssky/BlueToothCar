@@ -1,7 +1,6 @@
 package car.bluetooth.com.bluetoothcar.xxxcar.dialog;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -11,11 +10,9 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -26,7 +23,6 @@ import java.util.ArrayList;
 
 import car.bluetooth.com.bluetoothcar.xxxcar.R;
 import car.bluetooth.com.bluetoothcar.xxxcar.activity.MainActivity;
-import car.bluetooth.com.bluetoothcar.xxxcar.view.ProgressHelper;
 
 public class SearchBleDialog extends BaseDialog implements View.OnClickListener {
 
@@ -42,6 +38,8 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
     // 蓝牙适配器
     private BluetoothAdapter mBluetoothAdapter;
     private LeDeviceListAdapter listAdapter;
+
+    private int SCAN_TIME = 10000;
 
     @SuppressLint("HandlerLeak")
     private Handler viewHandler = new Handler() {
@@ -63,6 +61,7 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
         super(context);
         this.activity = context;
         this.context = context;
+        this.setCancelable(false);
         initView();
         init_ble();
     }
@@ -76,33 +75,58 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
         scanBtn = findViewById(R.id.scan);
         scanBtn.setOnClickListener(this);
 
-        searchList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                activity.connectBle(mLeDevices.get(i));
-                dismiss();
-            }
-        });
+        findViewById(R.id.cancle).setOnClickListener(this);
 
     }
+
+    private boolean isStopScan = false;
+
+    @SuppressLint("HandlerLeak")
+    private Handler searchHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            if (!isStopScan) {
+                mBluetoothAdapter.startLeScan(mLeScanCallback);
+                searchHandler.sendEmptyMessageDelayed(0, SCAN_TIME);
+            } else {
+                scanBtn.setEnabled(true);
+                scanBtn.setText("开始查找");
+                scanTex.setText("点击按钮开始查找");
+                scanState = false;
+            }
+        }
+    };
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.scan:
                 if (scanState) {
-                    mBluetoothAdapter.startLeScan(mLeScanCallback);
-                    scanBtn.setText("开始查找");
-                    scanTex.setText("点击按钮开始查找");
-                    scanState = false;
+                    stopScanBle();
                 } else {
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    scanBtn.setText("停止查找");
-                    scanTex.setText("查找中……");
-                    scanState = true;
+                    startScanBle();
                 }
                 break;
+            case R.id.cancle:
+                dismiss();
+                break;
         }
+    }
+
+    private void startScanBle() {
+        mBluetoothAdapter.startLeScan(mLeScanCallback);
+        searchHandler.sendEmptyMessageDelayed(0, SCAN_TIME);
+        scanBtn.setText("停止查找");
+        scanTex.setText("查找中……");
+        scanState = true;
+    }
+
+    private void stopScanBle() {
+        scanBtn.setEnabled(false);
+        scanTex.setText("停止中……");
+        isStopScan = true;
     }
 
     private class LeDeviceListAdapter extends BaseAdapter {
@@ -123,7 +147,7 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
         }
 
         @Override
-        public View getView(int i, View convertView, ViewGroup viewGroup) {
+        public View getView(final int i, View convertView, ViewGroup viewGroup) {
 
             ViewHolder holder;
             if (convertView == null) {
@@ -132,15 +156,24 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
 
                 holder.deviceAddress = convertView.findViewById(R.id.address);
                 holder.deviceName = convertView.findViewById(R.id.name);
+                holder.connectBnt = convertView.findViewById(R.id.connect);
 
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            BluetoothDevice device = mLeDevices.get(i);
+            final BluetoothDevice device = mLeDevices.get(i);
             holder.deviceAddress.setText(device.getAddress());
             holder.deviceName.setText(device.getName());
+            holder.connectBnt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    activity.connectBle(device);
+                    stopScanBle();
+                    dismiss();
+                }
+            });
 
             return convertView;
         }
@@ -148,9 +181,11 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
         private class ViewHolder {
             TextView deviceAddress;
             TextView deviceName;
+            Button connectBnt;
         }
 
     }
+
 
     private void init_ble() {
         // 手机硬件支持蓝牙

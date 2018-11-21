@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.hardware.sensor.accelerometer" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -35,6 +37,9 @@
                    <category android:name="android.intent.category.LAUNCHER" />
                </intent-filter>-->
         </activity>
+        <activity
+            android:name=".activity.HelpActivity"
+            android:screenOrientation="landscape" />
 
         <service android:name=".service.BluetoothLeService" />
     </application>
