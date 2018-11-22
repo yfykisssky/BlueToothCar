@@ -1,5 +1,6 @@
 package car.bluetooth.com.bluetoothcar.xxxcar.dialog;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -10,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,26 +82,6 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
 
     }
 
-    private boolean isStopScan = false;
-
-    @SuppressLint("HandlerLeak")
-    private Handler searchHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
-            if (!isStopScan) {
-                mBluetoothAdapter.startLeScan(mLeScanCallback);
-                searchHandler.sendEmptyMessageDelayed(0, SCAN_TIME);
-            } else {
-                scanBtn.setEnabled(true);
-                scanBtn.setText("开始查找");
-                scanTex.setText("点击按钮开始查找");
-                scanState = false;
-            }
-        }
-    };
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -117,16 +100,27 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
 
     private void startScanBle() {
         mBluetoothAdapter.startLeScan(mLeScanCallback);
-        searchHandler.sendEmptyMessageDelayed(0, SCAN_TIME);
         scanBtn.setText("停止查找");
         scanTex.setText("查找中……");
+        mLeDevices.clear();
+        listAdapter.notifyDataSetChanged();
         scanState = true;
     }
 
     private void stopScanBle() {
+        mBluetoothAdapter.stopLeScan(mLeScanCallback);
         scanBtn.setEnabled(false);
         scanTex.setText("停止中……");
-        isStopScan = true;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                scanBtn.setEnabled(true);
+                scanBtn.setText("开始查找");
+                scanTex.setText("点击按钮开始查找");
+                scanState = false;
+            }
+        }, 3000);
+
     }
 
     private class LeDeviceListAdapter extends BaseAdapter {
@@ -203,6 +197,28 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
             Intent enableBtIntent = new Intent(
                     BluetoothAdapter.ACTION_REQUEST_ENABLE);
             activity.startActivity(enableBtIntent);
+        }
+
+        //判断是否有权限
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //请求权限
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
+            //判断是否需要 向用户解释，为什么要申请该权限
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                    Manifest.permission.READ_CONTACTS)) {
+                Toast.makeText(context, "需要打开权限搜索BLE设备", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        //判断是否有权限
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //请求权限
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            //判断是否需要 向用户解释，为什么要申请该权限
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                    Manifest.permission.READ_CONTACTS)) {
+                Toast.makeText(context, "需要打开权限搜索BLE设备", Toast.LENGTH_SHORT).show();
+            }
         }
 
     }
