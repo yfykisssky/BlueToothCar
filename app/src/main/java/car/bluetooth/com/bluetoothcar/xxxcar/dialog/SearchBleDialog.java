@@ -206,7 +206,7 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
             //判断是否需要 向用户解释，为什么要申请该权限
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
                     Manifest.permission.READ_CONTACTS)) {
-                Toast.makeText(context, "需要打开权限搜索BLE设备", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "需要权限搜索BLE设备", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -217,7 +217,7 @@ public class SearchBleDialog extends BaseDialog implements View.OnClickListener 
             //判断是否需要 向用户解释，为什么要申请该权限
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
                     Manifest.permission.READ_CONTACTS)) {
-                Toast.makeText(context, "需要打开权限搜索BLE设备", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "需要权限搜索BLE设备", Toast.LENGTH_SHORT).show();
             }
         }
 
