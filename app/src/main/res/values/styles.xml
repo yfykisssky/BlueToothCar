@@ -9,7 +9,7 @@
     </style>
 
     <style name="SwitchTextColor" parent="@android:style/TextAppearance.Small">
-        <item name="android:textColor">#00ff00</item>
+        <item name="android:textColor">#FFFFFF</item>
     </style>
 
 </resources>

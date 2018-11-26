@@ -43,10 +43,10 @@ public class FindFragment extends BaseFragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.find:
                 if (isFind) {
-                    findBnt.setText("暂停");
+                    findBnt.setText("开始");
                     isFind = false;
                 } else {
-                    findBnt.setText("开始");
+                    findBnt.setText("暂停");
                     isFind = true;
                 }
                 break;

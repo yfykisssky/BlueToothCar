@@ -164,6 +164,13 @@ public class ColorPickerView extends android.support.v7.widget.AppCompatImageVie
         isMove = true;
     }
 
+    public void backToCenter() {
+        // // 初始化
+        iconPoint.x = realViewRadius;
+        iconPoint.y = realViewRadius;
+        invalidate();
+    }
+
     private boolean isMove;
 
     public void setOnColorChangedListenner(OnColorChangedListener l) {

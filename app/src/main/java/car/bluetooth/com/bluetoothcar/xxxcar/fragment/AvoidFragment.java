@@ -60,12 +60,12 @@ public class AvoidFragment extends BaseFragment implements View.OnClickListener 
         switch (view.getId()) {
             case R.id.avoid:
                 if (isStart) {
-                    avoidBnt.setText("暂停");
-                    getDataCenter().setAvoid(OrderCode.AVOID_START);
-                    isStart = false;
-                } else {
                     avoidBnt.setText("开始");
                     getDataCenter().setAvoid(OrderCode.AVOID_STOP);
+                    isStart = false;
+                } else {
+                    avoidBnt.setText("暂停");
+                    getDataCenter().setAvoid(OrderCode.AVOID_START);
                     isStart = true;
                 }
                 break;

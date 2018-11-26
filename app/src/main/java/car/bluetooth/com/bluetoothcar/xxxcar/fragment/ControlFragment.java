@@ -38,6 +38,8 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
 
     private RadioGroup soundRad;
 
+    private ColorPickerView cpv;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -61,11 +63,12 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
         view.findViewById(R.id.sound).setOnClickListener(this);
         view.findViewById(R.id.face).setOnClickListener(this);
 
+        view.findViewById(R.id.color_cancle).setOnClickListener(this);
         colorTex = view.findViewById(R.id.color_show);
 
         colorTex.setBackgroundColor(Color.WHITE);
 
-        ColorPickerView cpv = view.findViewById(R.id.picker);
+        cpv = view.findViewById(R.id.picker);
         cpv.setOnColorChangedListenner(new ColorPickerView.OnColorChangedListener() {
             @Override
             public void onColorChanged(int r, int g, int b) {
@@ -198,6 +201,10 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
                 colorLay.setVisibility(View.GONE);
                 soundLay.setVisibility(View.GONE);
                 faceLay.setVisibility(View.VISIBLE);
+                break;
+            case R.id.color_cancle:
+                cpv.backToCenter();
+                colorTex.setBackgroundColor(Color.WHITE);
                 break;
         }
     }

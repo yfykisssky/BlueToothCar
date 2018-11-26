@@ -7,7 +7,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="50dp"
+        android:background="#2894ff">
 
         <TextView
             android:id="@+id/scanstable"
@@ -15,16 +16,17 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="点击按钮开始查找" />
+            android:text="点击按钮开始查找"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/cancle"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:background="@mipmap/ic_launcher" />
+            android:background="@drawable/cancle" />
     </RelativeLayout>
 
     <ListView
@@ -38,9 +40,13 @@
 
     <Button
         android:id="@+id/scan"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="开始查找" />
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/button_selector"
+        android:text="开始查找"
+        android:textColor="#FFFFFF" />
 </RelativeLayout>
