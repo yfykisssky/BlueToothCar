@@ -150,7 +150,7 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
-                    <RadioGroup
+                    <car.bluetooth.com.bluetoothcar.xxxcar.view.MyRadioGroup
                         android:id="@+id/face_radio"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -162,42 +162,95 @@
                             android:layout_weight="1"
                             android:orientation="horizontal">
 
-                            <RadioButton
-                                android:id="@+id/face1"
-                                android:layout_width="wrap_content"
+                            <RelativeLayout
+                                android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:text="灯" />
+                                android:layout_weight="1">
 
-                            <RadioButton
-                                android:id="@+id/face2"
-                                android:layout_width="wrap_content"
+                                <RadioButton
+                                    android:id="@+id/face1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:button="@null"
+                                    android:drawableTop="@drawable/color" />
+
+                                <car.bluetooth.com.bluetoothcar.xxxcar.view.AnimView
+                                    android:id="@+id/facea1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:visibility="gone" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:text="灯" />
+                                android:layout_marginLeft="10dp"
+                                android:layout_weight="1">
+
+                                <RadioButton
+                                    android:id="@+id/face2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:button="@null"
+                                    android:drawableTop="@drawable/color" />
+
+                                <car.bluetooth.com.bluetoothcar.xxxcar.view.AnimView
+                                    android:id="@+id/facea2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:visibility="gone" />
+                            </RelativeLayout>
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
+                            android:layout_marginTop="10dp"
                             android:layout_weight="1"
                             android:orientation="horizontal">
 
-                            <RadioButton
-                                android:id="@+id/face3"
-                                android:layout_width="wrap_content"
+                            <RelativeLayout
+                                android:id="@+id/facer3"
+                                android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:text="灯" />
+                                android:layout_weight="1">
 
-                            <RadioButton
-                                android:id="@+id/face4"
-                                android:layout_width="wrap_content"
+                                <RadioButton
+                                    android:id="@+id/face3"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:button="@null"
+                                    android:drawableTop="@drawable/color" />
+
+                                <car.bluetooth.com.bluetoothcar.xxxcar.view.AnimView
+                                    android:id="@+id/facea3"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:visibility="gone" />
+                            </RelativeLayout>
+
+                            <RelativeLayout
+                                android:id="@+id/facer4"
+                                android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight="1"
-                                android:text="灯" />
+                                android:layout_marginLeft="10dp"
+                                android:layout_weight="1">
+
+                                <RadioButton
+                                    android:id="@+id/face4"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:button="@null"
+                                    android:drawableTop="@drawable/color" />
+
+                                <car.bluetooth.com.bluetoothcar.xxxcar.view.AnimView
+                                    android:id="@+id/facea4"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:visibility="gone" />
+                            </RelativeLayout>
                         </LinearLayout>
-                    </RadioGroup>
+                    </car.bluetooth.com.bluetoothcar.xxxcar.view.MyRadioGroup>
                 </LinearLayout>
             </RelativeLayout>
 

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +18,10 @@ import android.widget.Toast;
 import com.larswerkman.holocolorpicker.ColorPicker;
 
 import car.bluetooth.com.bluetoothcar.xxxcar.R;
+import car.bluetooth.com.bluetoothcar.xxxcar.util.ViewTool;
+import car.bluetooth.com.bluetoothcar.xxxcar.view.AnimView;
 import car.bluetooth.com.bluetoothcar.xxxcar.view.ColorPickerView;
+import car.bluetooth.com.bluetoothcar.xxxcar.view.MyRadioGroup;
 import car.bluetooth.com.bluetoothcar.xxxcar.view.RockerView;
 
 public class ControlFragment extends BaseFragment implements View.OnClickListener {
@@ -34,7 +38,7 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
 
     private LinearLayout faceLay;
 
-    private RadioGroup faceRad;
+    private MyRadioGroup faceRad;
 
     private RadioGroup soundRad;
 
@@ -86,23 +90,40 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
             }
         });
 
+        initFaceRadio(view);
+
         faceRad = view.findViewById(R.id.face_radio);
 
-        faceRad.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        faceRad.setOnCheckedChangeListener(new MyRadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch (radioGroup.getCheckedRadioButtonId()) {
+            public void onCheckedChanged(MyRadioGroup group, int checkedId) {
+                switch (group.getCheckedRadioButtonId()) {
                     case R.id.face1:
+                        clearFaceA();
+                        animView1.setVisibility(View.VISIBLE);
                         break;
                     case R.id.face2:
+                        clearFaceA();
+                        animView2.setVisibility(View.VISIBLE);
                         break;
                     case R.id.face3:
+                        clearFaceA();
+                        animView3.setVisibility(View.VISIBLE);
                         break;
                     case R.id.face4:
+                        clearFaceA();
+                        animView4.setVisibility(View.VISIBLE);
                         break;
                 }
             }
         });
+
+       /* faceRad.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+
+            }
+        });*/
 
         soundRad = view.findViewById(R.id.sound_radio);
 
@@ -207,6 +228,39 @@ public class ControlFragment extends BaseFragment implements View.OnClickListene
                 colorTex.setBackgroundColor(Color.WHITE);
                 break;
         }
+    }
+
+    private RadioButton radioButtonF1;
+    private RadioButton radioButtonF2;
+    private RadioButton radioButtonF3;
+    private RadioButton radioButtonF4;
+
+    private AnimView animView1;
+    private AnimView animView2;
+    private AnimView animView3;
+    private AnimView animView4;
+
+    private void initFaceRadio(View view) {
+        radioButtonF1 = view.findViewById(R.id.face1);
+        ViewTool.setRadioButtonRect(radioButtonF1, getContext());
+        radioButtonF2 = view.findViewById(R.id.face2);
+        ViewTool.setRadioButtonRect(radioButtonF2, getContext());
+        radioButtonF3 = view.findViewById(R.id.face3);
+        ViewTool.setRadioButtonRect(radioButtonF3, getContext());
+        radioButtonF4 = view.findViewById(R.id.face4);
+        ViewTool.setRadioButtonRect(radioButtonF4, getContext());
+
+        animView1 = view.findViewById(R.id.facea1);
+        animView2 = view.findViewById(R.id.facea2);
+        animView3 = view.findViewById(R.id.facea3);
+        animView4 = view.findViewById(R.id.facea4);
+    }
+
+    private void clearFaceA() {
+        animView1.setVisibility(View.GONE);
+        animView2.setVisibility(View.GONE);
+        animView3.setVisibility(View.GONE);
+        animView4.setVisibility(View.GONE);
     }
 
     @Override
