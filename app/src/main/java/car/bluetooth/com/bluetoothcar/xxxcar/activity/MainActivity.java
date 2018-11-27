@@ -231,6 +231,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
             }
         });
+
         mBluetoothLeService.initialize();
         mBluetoothLeService.connect(bluetoothDevice.getAddress());
 
