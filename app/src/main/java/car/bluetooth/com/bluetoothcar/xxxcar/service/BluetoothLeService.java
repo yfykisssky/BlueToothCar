@@ -41,6 +41,8 @@ public class BluetoothLeService extends Service {
     public final static String EXTRA_DATA = "com.hc_ble.bluetooth.le.EXTRA_DATA";*/
 
     private GetBlueToothData getBlueToothData;
+    private BluetoothManager mBluetoothManager;
+    private BluetoothAdapter mBluetoothAdapter;
 
     public void setGetBlueToothData(GetBlueToothData getBlueToothData) {
         this.getBlueToothData = getBlueToothData;
@@ -81,6 +83,25 @@ public class BluetoothLeService extends Service {
         mOnDataAvailableListener = l;
     }
 
+    public boolean initialize() {
+        // For API level 18 and above, get a reference to BluetoothAdapter
+        // through
+        // BluetoothManager.
+        if (mBluetoothManager == null) {   //获取系统的蓝牙管理器
+            mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+            if (mBluetoothManager == null) {
+                return false;
+            }
+        }
+
+        mBluetoothAdapter = mBluetoothManager.getAdapter();
+        if (mBluetoothAdapter == null) {
+            return false;
+        }
+
+        return true;
+    }
+
     /* 连接远程设备的回调函数 */
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
@@ -89,6 +110,7 @@ public class BluetoothLeService extends Service {
             {
                 getBlueToothData.connectSuccess();
                 mConnectionState = STATE_CONNECTED;
+                gatt.discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED)//连接失败
             {
                 getBlueToothData.connectFailed();
@@ -236,8 +258,9 @@ public class BluetoothLeService extends Service {
     private final IBinder mBinder = new LocalBinder();
 
     // 连接远程蓝牙
-    public void connect(BluetoothDevice device) {
+    public void connect(String address) {
         /* 调用device中的connectGatt连接到远程设备 */
+        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         mBluetoothGatt = device.connectGatt(this, false, mGattCallback);
         mConnectionState = STATE_CONNECTING;
     }
